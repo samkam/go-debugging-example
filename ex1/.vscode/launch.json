@@ -10,12 +10,24 @@
                 "mode": "auto",
                 "program": "${workspaceFolder}",
                 //next two lines are purely for troubleshooting issues with the debugger
-                //output appears 
+                //output appears in "Debug Console" pane
                 "showLog": true,
                 "trace": "log"
         },
         {
-                "name": "f remote launch debugger in docker",
+                "name": "2: launch local test",
+                "type": "go",
+                "request": "launch",
+                "mode": "test",
+                "program": "${workspaceFolder}/some_package",//specify name of package
+                //next two lines are purely for troubleshooting issues with the debugger
+                //output appears in "Debug Console" pane 
+                "showLog": true,
+                "trace": "log"
+        },
+        {
+                "name": "3: debug docker container",
+                //requires  "make docker_build" and "make docker_debug" to be run before this can successfully launched 
                 "type": "go",
                 "request": "attach",
                 "mode": "remote",
@@ -23,6 +35,8 @@
                 "port": 40000,
                 "host": "127.0.0.1",
                 "cwd": "${workspaceFolder}",
+                //next two lines are purely for troubleshooting issues with the debugger
+                //output appears in "Debug Console" pane 
                 "showLog": true,
                 "trace": "log"
         },
