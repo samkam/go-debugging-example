@@ -12,7 +12,9 @@
                 //next two lines are purely for troubleshooting issues with the debugger
                 //output appears in "Debug Console" pane
                 "showLog": true,
-                "trace": "log"
+                "trace": "log",
+                "args": ["arbitrary_value"],
+                "env": {"ENVIRONMENTAL_VARIABLE":"set"}
         },
         {
                 "name": "2: launch local test",

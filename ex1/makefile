@@ -1,8 +1,13 @@
 # execute with no debugger
+build_debuggable_executable:
+	# build without compiler optimizations
+	go build -gcflags="all=-N -l" -o debuggable_executable main.go
 run:
 	ENVIRONMENTAL_VARIABLE=set ./debuggable_executable arbitrary_argument
+open:
+	open http://localhost:8080/ping
 test: 
-	go test ./..
+	go test ./...
 
 # 1: delve debug locally
 debug_local:
@@ -11,12 +16,9 @@ debug_local:
 # 2: delve debug test locally
 debug_test: 
 	dlv test --help | head -12
-	dlv test some_package
+	dlv test ./some_package
 
 # 3: delve exec locally example 
-build_debuggable_executable:
-	# build without compiler optimizations
-	go build -gcflags="all=-N -l" -o debuggable_executable main.go
 debug_exec:
 	dlv exec --help | head -13
 	ENVIRONMENTAL_VARIABLE=set dlv exec debuggable_executable -- arbitrary_argument
