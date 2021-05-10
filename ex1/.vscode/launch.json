@@ -1,0 +1,30 @@
+//
+//
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+                "name": "1: launch local example",
+                "type": "go",
+                "request": "launch",
+                "mode": "auto",
+                "program": "${workspaceFolder}",
+                //next two lines are purely for troubleshooting issues with the debugger
+                //output appears 
+                "showLog": true,
+                "trace": "log"
+        },
+        {
+                "name": "f remote launch debugger in docker",
+                "type": "go",
+                "request": "attach",
+                "mode": "remote",
+                "remotePath": "/go/src/github.com/getbread/debug-examples/ex1",
+                "port": 40000,
+                "host": "127.0.0.1",
+                "cwd": "${workspaceFolder}",
+                "showLog": true,
+                "trace": "log"
+        },
+    ]
+}
