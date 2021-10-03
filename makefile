@@ -12,7 +12,7 @@ test:
 # 1: delve debug locally
 debug_local:
 	dlv debug --help | head -13
-	dlv debug main.go --init=init.sh -- arbitrary_argument
+	ENVIRONMENTAL_VARIABLE=set dlv debug main.go -- somevalue
 # 2: delve debug test locally
 debug_test: 
 	dlv test --help | head -12

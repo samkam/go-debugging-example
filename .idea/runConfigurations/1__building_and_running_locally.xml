@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="1: building and running locally" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="ex1" />
+    <working_directory value="$PROJECT_DIR$/" />
+    <go_parameters value="-i" />
+    <parameters value="arbitrary_argument" />
+    <envs>
+      <env name="ENVIRONMENTAL_VARIABLE" value="setbygolandconfigs" />
+      <env name="NEW_ENV" value="temp" />
+    </envs>
+    <kind value="FILE" />
+    <filePath value="$PROJECT_DIR$/main.go" />
+    <package value="github.com/getbread/debug-examples/ex1" />
+    <directory value="$PROJECT_DIR$/" />
+    <method v="2" />
+  </configuration>
+</component>

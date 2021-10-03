@@ -21,12 +21,12 @@ func main() {
 //init runs automatically before main (built in feature of golang)
 func init() {
 	envVar := os.Getenv("ENVIRONMENTAL_VARIABLE")
-	argVar := os.Args[0]
 	if envVar == "" {
 		fmt.Printf("envVar not set! ")
 		os.Exit(1)
 	}
-	if argVar == "" {
+	argVar := os.Args[1]
+	if argVar != "somevalue" {
 		fmt.Printf("argument not set!")
 		os.Exit(2)
 	}
