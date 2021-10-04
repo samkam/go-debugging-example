@@ -7,9 +7,7 @@
                 "request": "launch",
                 "mode": "auto",
                 "program": "${workspaceFolder}",
-                "showLog": true,
-                "trace": "log",
-                "args": ["arbitrary_value"],
+                "args": ["somevalue"],
                 "env": {"ENVIRONMENTAL_VARIABLE":"set"}
         },
         {
