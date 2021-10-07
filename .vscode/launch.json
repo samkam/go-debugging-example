@@ -24,9 +24,19 @@
                 "type": "go",
                 "request": "attach",
                 "mode": "local",
-                "program": "${workspaceFolder}/some_pacakge",
-                "processId": "${command:pickProcess}"
+                "program": "${workspaceFolder}",
+                "processId": "debuggable_executable"
         },
+        {
+                "name": "4: launch against server",
+                "type": "go",
+                "request": "attach",
+                "mode": "remote",
+                "program": "${workspaceFolder}",
+                "host": "localhost",
+                "port": "40000",
+
+        }
         {
                 "name": "3: debug docker container",
                 "type": "go",
