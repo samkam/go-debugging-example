@@ -20,11 +20,19 @@
                 "trace": "log"
         },
         {
+                "name": "3: launch against running process",
+                "type": "go",
+                "request": "attach",
+                "mode": "local",
+                "program": "${workspaceFolder}/some_pacakge",
+                "processId": "${command:pickProcess}"
+        },
+        {
                 "name": "3: debug docker container",
                 "type": "go",
                 "request": "attach",
                 "mode": "remote",
-                "remotePath": "/go/src/github.com/getbread/debug-examples/ex1",
+                "remotePath": "/go/src/github.com/getbread/debug-examples",
                 "port": 40000,
                 "host": "127.0.0.1",
                 "cwd": "${workspaceFolder}",

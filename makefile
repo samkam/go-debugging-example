@@ -3,7 +3,7 @@ build_debuggable_executable:
 	# build without compiler optimizations
 	go build -gcflags="all=-N -l" -o debuggable_executable main.go
 run:
-	ENVIRONMENTAL_VARIABLE=set ./debuggable_executable arbitrary_argument
+	ENVIRONMENTAL_VARIABLE=set ./debuggable_executable somevalue
 open:
 	open http://localhost:8080/ping
 test: 

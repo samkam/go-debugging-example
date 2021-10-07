@@ -23,3 +23,5 @@ https://medium.com/@kaperys/delve-into-docker-d6c92be2f823
 
 # debug scripts????
 TODO: 
+https://github.com/golang/vscode-go/blob/master/docs/debugging.md#launchjson-attributes
+https://code.visualstudio.com/docs/editor/debugging#_launchjson-attributes

@@ -1,4 +1,4 @@
-module github.com/getbread/debug-examples/ex1
+module github.com/getbread/debug-examples
 
 go 1.15
 

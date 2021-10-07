@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/getbread/debug-examples/ex1/some_package"
+	"github.com/getbread/debug-examples/some_package"
 	"github.com/gin-gonic/gin"
 )
 
