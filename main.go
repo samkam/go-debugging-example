@@ -31,4 +31,5 @@ func init() {
 		os.Exit(2)
 	}
 	fmt.Printf("initialization passed!")
+	fmt.Printf("extra line")
 }

@@ -38,16 +38,23 @@
 
         }
         {
-                "name": "3: debug docker container",
+                "name": "5: debug docker container new",
                 "type": "go",
                 "request": "attach",
                 "mode": "remote",
-                "remotePath": "/go/src/github.com/getbread/debug-examples",
                 "port": 40000,
                 "host": "127.0.0.1",
                 "cwd": "${workspaceFolder}",
+                "substitutePath": [
+                        {
+                                "from":"${workspaceFolder}",
+                                "to": "/app"
+                        },
+                ],
+                "preLaunchTask": "run docker image",
+                "stopOnEntry": "true",
                 "showLog": true,
-                "trace": "log"
+                "trace": "info",
         },
     ]
 }

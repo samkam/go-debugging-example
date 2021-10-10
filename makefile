@@ -35,8 +35,13 @@ debug_connect:
 
 docker_build:
 	docker build -t debug-example-app . 
-docker_debug:
+# runs docker container unmodified
+docker_run:
 	docker run --rm --publish 40000:40000 --publish 8080:8080 --security-opt=seccomp:unconfined --name debug-example debug-example-app
+# overwrites CMD with command to launch debugger
+docker_debug:
+	docker run --rm --expose=40000 --publish 40000:40000 --publish 8080:8080 --security-opt=seccomp:unconfined --name debug-example debug-example-app \
+		dlv debug main.go --listen=:40000 --headless=true --api-version=2 -- somevalue
 
 # 5: unspecified commands
 kill: 
