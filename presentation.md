@@ -1,31 +1,46 @@
 # gophercon talk 
-Before I present I want to show: 
 
 
-1. Launching a debugger, setting a breakpoint, inspecting a nested struct, changing a value and then resuming execution in VS code
+- - - -
+# Intro
+Hi, I'm Sam Kamenetz, I'm a software engineer at Bread, and I love using debuggers. and I'll candidly admit, it took me a long time to figure out how to use Delve, go's debugger. Debugging a hello world application was easy enough, I was able to stumble along by pressing the debug button in my IDE, but I got flustered by  more complicated set ups I encountered in my day to day job, like debugging a test, or debugging a dockerized application. I decided to take the time to learn the ins and outs of delve, and wanted to share my knowledge. 
 
-2. 
+This talk isn’t just for debugger enthusiasts, but anyone that's tried to debug their project, and even the debugger skeptical. For all of you, my pitch is this: setting up a debugger requires understanding the nuances of how the debugger, project, and IDE interact. It can feel like too much work to set it up in the middle of hunting down a bug. But here’s the thing, it’s a time investment, but it’s a one time investment.  Once you configure your tooling, you can debug at will, even at the press of a button. from there, it's just setting breakpoints.
 
-3. How to use the CLI delve tool, set breakpoint briefly. 
+we aren't going to focus much on actual debugger commands. I’m assuming you have used a debugger and are familiar with basic operations of setting breakpoints and stepping through code execution, and that'll be sufficient for following along. 
 
-Why debugger are useful: 
-
-Bad debugger code snippets: 
-
-
----
-ACTUAL SCRIPT
-This talk is for anyone that isn’t just for debugger enthusiasts, but also those that have wrestled with setting up a debugger for their project, and even the debugger skeptical. 
-
-For all of you, my pitch is this: setting up a debugger requires understanding the nuances of how the debugger works and how to configure it in relation to your project. It can feel like a lot of work to set it up in the middle of hunting down a bug. But here’s the thing, it’s a time investment, but it’s a one time investment. Once you figure out the configuration needed for your project, You can continue to reuse that configuration and share it with your whole team, hell, even put it in the repo, and suddenly you can debug with a press of a button. 
-
-Note: I’m assuming you have used a debugger of some kind in the past, and are familiar with the basic operations of setting breakpoints and stepping through code execution. Even if you aren’t, this is most intuitive part of a debugger. Again, we are focusing on the unintuitive part, the 
-
-First, I’m gonna spend a little time proselytizing debuggers to the skeptical. Have you ever found yourself  doing this? Trying to print out a value?  And then you realize it’s the wrong value, so you print out the struct, and then it’s too much output, so you have to figure out which member structs you care about? And then it’s formatted weird so you have to look up string formatting parameters? 
-
-Well, using a GUI debugger, like Delve via the Go-extension in VS Code, you see all the variables visible in the current scope, at any breakpoint. 
-example 0:
+# why debuggers are awesome
+First, I’m gonna spend a little time proselytizing debuggers to the skeptical. Have you ever found yourself  writing code like this? 
 ```
+# open bad_main.go in editor
+```
+where you keep on trying to tweak your print statements and recompiling? No more! A debugger will allow you dynamically print and inspect values. It's better than logging,  lets you find bugs faster, and can even allow you to dynamically change values.
+
+```
+launch example 1 debug config in IDE 
+break in init. run. inspect local values in main. 
+```
+imagine these scenarios. 
+A function is called by many other functions, and you aren't sure what call chain represents the error case. You can inspect the call stack with a debugger. 
+```
+set breakpoint, run and inspect call stack. 
+```
+or your code is working fine, but the test is failing, you can launch a debugger against the test itself. Or perhaps a the code works locally, but not in the docker contaiiner. You can launch a debugger against the docker container. if you are getting a nil pointer dereference, and aren't sure why, you can set breakpoints, and watch the values change from line to line. 
+
+Safe to say, debuggers are very very useful, and make your life easier.
+
+# Forward
+For each scenario, I'm going to show you how to launch delve as a command line application, and show how the same configuration works when run through the vscode's gui debugger.  so why the CLI and then vscode? I think the CLI, even if it's not the most ergonomic way to run a debugger, is a good basis for understanding the commands before we introduce layers of our tooling.  
+
+For vscode, I like because it's a common tool that's highly configurable, and has robust debugging capabilities. A lot of my coworkers like using Jet Brain's Goland IDE, since debugging usually (emphasis on usually) works out of the box.  I prefer vscode (in general, and for debugging) because the debug settings are much more flexible (there's some really cool things you can do with it), and easily portable (eg, you can easily include the debug configurations as part of version control, more on that later)
+
+You will need vs code editor  the go-extension configured, and naturally delve install. 
+
+# Example 1
+Let's start with a simple web server, running locally on port 8080. and unfortunately for us, it doesn't run when I run it like this: 
+```
+go run main.go
+# lets take a crack at it with the delve debugger
 dlv debug 
 break main.go:25
 continue
@@ -51,17 +66,19 @@ dlv debug main.go -- somevalue
 continue 
 # okay, seems to be working!  
 ```
-but of course, we are going to have to remember the program argument, as well as setting the environment variable! we don't want to keep around 1 env variable for a single frame mode of execution. well, never remember something that you can make a machine remember for you. 
 
-for this use case I'm partial to makefiles. If you aren't familiar with them, they are essentially files that alias longer sets of commands. think of it as a way of having many short bash scripts tailored for a specifc project. 
+now, the last thing I want you to do is commit this to your brain's memory. Never remember something that you can make a machine remember for you. let's save this command somewhere, like a makefile. If you aren't familiar with them, they are essentially files that alias longer sets of commands. Think of it as a way of having many short bash scripts tailored for a specifc project. 
 
-let's focus on our example here. all we have to do is run `make debug_local` , and we are off to the races. here i'm just printing the top of the help command for covenience, and then setting an environment variable before executing our dlv command. 
+you can see what the command is actually executing like this: 
+```
+make debug_local --dry-run
+# here i'm just printing the top of the help command for covenience, and then setting an environment variable before executing our dlv command.
+make debug_local
+```
 
-This is well and good, but most people find CLI debuggers a little clunky to use. If you are more like me, you want a GUI display. so how do we get a smoother user experience? This is where vscode and the go extension come in. 
+while the CLI debugger works, you probably want a GUI built into your editor. This is where vscode and the go extension come in. 
 
-I'm gonna skip over the set up steps of installing vscode and the go plugin. plenty of guides do that.  let's start with configuring the debugger in vscode. if you haven't already, you'll need to create a `launch.json`  confiig file for the vscode editor. 
-
-when you first create it, we get a boiler plate configuratiopn for the editor, and it's pretty close to what we want. we want our first configuration to look like this
+I'm gonna skip over the set up steps of installing vscode and the go plugin. There are plenty of guides do that.  Let's start with configuring the debugger in vscode. if you haven't already, you'll need to create a `launch.json`  config file for the vscode editor.  I've already created mine. 
 
 some notes: request can be "launch" or "attach". we'll touch on that later.  really we are just adding the optional fields to get the equivalent config for our make command.  
 ```
@@ -76,47 +93,54 @@ some notes: request can be "launch" or "attach". we'll touch on that later.  rea
         },
 ```
 
-and what do you know, when we flip to the debugger tab, we see it show up on the dropdown. when we run, we can see a pane for our breakpoints. when we actually hit our breakpoint by pinging the server
+when we select the debugger tab, we see it show up on the dropdown. Let's ping the server and hit a breakpoint.
+
 ```
-make open
+# break on some_package/some_package.go:8
+curl localhost:8080/ping
 ```
-we see the variables populate as a tree, for argumetns locals and variables. we can also see the callstack right there, no extra commands. and of course, we can add breakpoints, etc as we could delve. 
+we see the variables populate as a tree, for arguments locals and variables. we can also see the callstack right there. and of course, we can add breakpoints, etc as we could in the CLI application . 
 
-going forward,I'm going to focus on the golang launch.json configuration instead of the makefile. but find my repo after the presentaton, I have all the configurations in both forms. 
 
-# example 2: Debugging a tests
-now supoose you want to figure out why a test is broken. Delve can do that too! 
+# Example 2: Debugging a tests
+Now suppose you want to figure out why a test is broken. Delve can do that too! 
 
-just as you would test natively with the `go test` and specifying a package: 
+just as you would test natively with the `go test` and specifying a package, you invoke 
 ```
 go test ./some_package
 # we can launch the same with delve
 dlv test ./some_package
 break some_package/some_package.go:9
 continue
-print message
+print Message
 ```
 Let's take a look on how we do this with vscode launch configurations: 
 
-we have to specify "test mode" and then the package, but other than that, it looks like we are good to go! you are probably askng yourself, how on earth would I discover this by msyelf? well, i'd highly recommend reading abou launch.json configurations. You will need to read that on visual studios docs, as well as in the go-code extension. (NOTE not a good spot to put this) . 
-# aside: client server model. 
-so before we go any further you should probably understand a bit of what's happening under the hood. the  correct mental model will help you reason about configuring your debugger better. 
+we have to specify "test mode" and then the package, but other than that, it looks like we are good to go!
+# Aside: client server model. 
+Before we go into more complicated examples, let's talk about how debuggers work. The correct mental model will help you reason about configuring your debugger. 
+[Pull up slide]
 
-I'm stealing this slide from Alessandro Arzillli's 2018 gopehrcon talk about the internal architecture of delve. Now, his talk goes into the nitty gritty of it, but the gist of it is that delve in of itself is both a client (representing the UI, and it's service layer) and then a server which maps the symobls of the program to memory addresses and actually manipulates the execution of the program itself.  this separation is important, because this is what allows us to support  running a debugger on say, a different machine, be it a remote server or a container.  
+I'm stealing this slide from Alessandro Arzillli's 2018 gophercon talk about the internal architecture of delve.  His talk goes into full detail of the architecture, but the gist is that delve is contains a client (representing the UI, and it's service layer) and then a server which maps the symobls of the program to memory addresses and manipulates the execution of the program itself.  This separation is important, because this is what allows us to support running a debugger on say, a different machine, be it a remote server or a container.  
 
-when we use the delve via vscode, a "DAP" or debug adaptor protocol, (which ships witht the vscode-go extension) effectively acts as the new frontend, instead of the CLI interface. it converts the UI actions that are standard to vscode and converts them into rpc requests to the server. it also handles launching the server process, eg headless mode.  (NOTE TO SELF: work shop this)
+When we use the Delve via vscode, a "DAP" or debug adaptor protocol, (which ships witht the vscode-go extension) serves as the new frontend, instead of the CLI interface. it uses the UI actions that are standard to vscode and converts them into rpc requests to the server. it also handles launching the server process, eg, launching the debug server via the  "headless" option 
+ 
 note: this describes the legacy version of delve (which is currently the default). the newest versions which must be opted into natively support the DAP and require no separate adaptor. 
 
 # Example 3: running process
-now that we understand the client server model, it will be more understandable how we can debug increasingly complicated set ups. Let's try debugging a locally running process. 
+now that we understand the client server model,  Let's try debugging a locally running process. 
 you'll see in my make file I've identified a somewhate verbose command to build the executable. 
 
-I'd like to briefly call attention to this 'gcflags 
-
-gcflags='all=-N -l'
-these are disabling Compiler optimizations and inlining, we won't worry about that. that just makes ithe executable easier to debug 
-
-Now, let's build and run this:
+```
+make build_debuggable_executable --dry run
+```
+I'd like to briefly call attention to this 'gcflags.  this is telling the compiler to disable optimizations and inlining, which can sometimes interfere with debugger execution. 
+```
+make run --dry-run
+make debug_attach
+```
+ 
+the rest of the commands are simple,  note that we are using "attach" instead of debug, and using pgrep to find the process id by name. 
 ```
 make build_debuggable_executable
 make run
@@ -128,39 +152,50 @@ break some_package/some_package.go:8
 print Message
 ```
 Let's talk about  the launch config for this one 
+[open launch.json, example 3] 
 
-```
-"name": "3: launch against running process",
-"type": "go",
-"request": "attach",
-"mode": "local",
-"program": "${workspaceFolder}",
-"processId": "${command:pickProcess}
-```
-so there's a few interesting things going on here. 
-first we are "attaching" rather than launching. You can essentially think of this as rather than starting the process itself, we are attaching (WORD SMITH) . 
-the next point is that we are using the local flag. in this case, its telling us this is a process, rahter than a remote URL to connect to. 
+first we are "attaching" rather than launching. Rather than starting the process itself (launching) we are connecting to an already running process (attach). 
+ 
+then we are using the "local" flag. in this case, indicating a process , rather than a remote URL to connect to. 
 
-now the pick process is a built in for vscode, and well easier to show how it works. 
-
-Not the most efficient point to debug, but very cool what the built in functions can do. 
+finally we are specifying the process name.   
 
 # Example 4: debugging a remote server. 
-so this one  is probably  a less likely one you'll encounter in your day to day workflow, but more illustrative of our most complicated example, running a docker container debugger.  Here's you do it on the command line
+Now, let's debug  from a remote server. this isn't a scenario that's as likely to come up in my day to day at least, but It's a good stepping stone to our most complicated example, running a docker container debugger. 
 
- first we start the server. I want to call attention to the flags we are passing in. We are launching in headless mode, meaning we are running the debugger as just a server. we are also using the multi-client option, so it doesn't get picky about which client it connects to. Finally, we are specifying the port so we can reliably connect to it as opposed to being assigned a random port.  I also specify the api version  to make sure it plays nice with vs-code in the second part of this example. 
+```
+make debug_server --dry-run
+```
 
-this is where the client server model really comes in handy. the connect command is just attaching the frontend to the headless server we are running to
+first we are starting a server. I want to call attention to the flags we are passing in. 
+1. We launch in headless mode, meaning we are running the debugger as just a server, waiting for a client to connect.
+2. we use the multi-client option (meaning multiple clients can connect, sometimes necessary for certain debug interactions, like the --continue flag, to reconnect to a server without restarting. 
+3. we specify the port so we can reliably connect to it as opposed to being assigned a random port. 
+4. I specify the api version  to make sure it plays nice with vs-code in the second part of this example. 
+let's take a look at how we are connecting to this headless debug server
+```
+make debug_connect --dry-run 
+```
+this is where the client server model really comes in handy. the connect command is just attaching the frontend to the headless server we are running, specifying the port. 
+
 ```
 make debug_server
 make debug_connect
 break some_package/some_package.go:8
 curl localhost:8080/ping
 ```
+
+[open launch.json, example 4] 
 the launch configs aren't terrbily exciting. rahter than specifying an executable name, we are specifying the host and port, a dn using the "remote and attach" configuration, which maps to our connect CLI invocation. 
 
+[launch vscode debugger,  run example 4] 
+
 # Example 5: debugging a docker container. 
-okay, I think of this as the most difficult step, but we've built up to this.  the first thing we are going to is take a look at our dockerfile. Now, we do have to modify this so that it can support debugging. we do have to add this go get for the dlv tool to exist within the docker container itself. that' no issue here. (note, if this feels kind of ugly to you, you can always make a second dockerfile exclusively for debuggin with this step included. for this example, I'm going to be overriding the CMD in our main docker file. for now, let's continue. 
+okay, onto the most diffficult example, debugging a docker. luckily we've built up to this point. First we have to modify our dockerfile to support debugging.
+[open Dockerfile]
+
+first we have to add the delve tool 
+we do have to add this go get for the dlv tool to exist within the docker container itself. that' no issue here. (note, if this feels kind of ugly to you, you can always make a second dockerfile exclusively for debugging with this step included. for this example, I'm going to be overriding the CMD in our main docker file. for now, let's continue. 
 
 first we are going to build the docker container: 
 ```
@@ -221,3 +256,4 @@ note: you should debug a remote configuration via ssh tunnel or on a vpn. not be
 https://github.com/go-delve/delve/blob/master/Documentation/faq.md
 
 https://code.visualstudio.com/docs/editor/debugging
+ you are probably askng yourself, how on earth would I discover this by msyelf? well, i'd highly recommend reading about launch.json configurations. You will need to read that on visual studios docs, as well as in the go-code extension. (NOTE not a good spot to put this) . 
