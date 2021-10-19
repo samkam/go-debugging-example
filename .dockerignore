@@ -1,0 +1,4 @@
+debuggable_executable
+__debug_bin
+.vscode/*
+.idea

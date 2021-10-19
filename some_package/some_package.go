@@ -5,6 +5,6 @@ import "fmt"
 var Message = "this is my message"
 
 func GetMessage() string {
-	fmt.Printf("message set to: %s", Message)
+	fmt.Printf("\nmessage set to: %s\n", Message)
 	return Message
 }

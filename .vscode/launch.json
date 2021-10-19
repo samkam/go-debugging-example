@@ -5,7 +5,7 @@
                 "name": "1: launch local example",
                 "type": "go",
                 "request": "launch",
-                "mode": "auto",
+                "mode": "debug",
                 "program": "${workspaceFolder}",
                 "args": ["somevalue"],
                 "env": {"ENVIRONMENTAL_VARIABLE":"set"}
@@ -16,11 +16,9 @@
                 "request": "launch",
                 "mode": "test",
                 "program": "${workspaceFolder}/some_package",
-                "showLog": true,
-                "trace": "log"
         },
         {
-                "name": "3: launch against running process",
+                "name": "4: launch against running process",
                 "type": "go",
                 "request": "attach",
                 "mode": "local",
@@ -28,7 +26,7 @@
                 "processId": "debuggable_executable"
         },
         {
-                "name": "4: launch against server",
+                "name": "5: launch against server",
                 "type": "go",
                 "request": "attach",
                 "mode": "remote",
@@ -36,9 +34,9 @@
                 "host": "localhost",
                 "port": "40000",
 
-        }
+        },
         {
-                "name": "5: debug docker container new",
+                "name": "6: debug docker container new",
                 "type": "go",
                 "request": "attach",
                 "mode": "remote",
@@ -55,6 +53,16 @@
                 "stopOnEntry": "true",
                 "showLog": true,
                 "trace": "info",
+        },
+        {
+                "name": "0: launch with script",
+                "type": "go",
+                "request": "launch",
+                "mode": "auto",
+                "program": "${workspaceFolder}",
+                "args": ["somevalue"],
+                "env": {"ENVIRONMENTAL_VARIABLE":"set"},
+                "dlvFlags": ["--init=scripts/debug_script.txt"]
         },
     ]
 }

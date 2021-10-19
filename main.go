@@ -15,6 +15,7 @@ func main() {
 			"message": some_package.GetMessage(),
 		})
 	})
+	playground()
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
@@ -32,4 +33,16 @@ func init() {
 	}
 	fmt.Printf("initialization passed!")
 	fmt.Printf("extra line")
+}
+
+func playground() {
+	j := 0
+	a := 0
+	b := 0
+	for i := 0; i < 100; i++ {
+		j = j + i
+		a = i
+		b = i
+	}
+	fmt.Print(a + b)
 }

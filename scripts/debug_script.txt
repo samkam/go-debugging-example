@@ -1,0 +1,15 @@
+break b1 main.go:44
+trace t1 main.go:45
+condition -hitcount b1 % 10
+on b1 print i 
+continue
+continue
+continue
+continue
+continue
+continue
+print i
+set i = 0
+print i
+continue
+continue

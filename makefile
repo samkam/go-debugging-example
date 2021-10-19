@@ -43,6 +43,8 @@ docker_debug:
 	docker run --rm --expose=40000 --publish 40000:40000 --publish 8080:8080 --security-opt=seccomp:unconfined --name debug-example debug-example-app \
 		dlv debug main.go --listen=:40000 --headless=true --api-version=2 -- somevalue
 
+debug_with_script:
+	ENVIRONMENTAL_VARIABLE=set dlv debug main.go  --init=scripts/debug_script.txt -- somevalue
 # 5: unspecified commands
 kill: 
 	# "-f" searches for matching expression, "-l" list PID
@@ -51,3 +53,8 @@ kill:
 debug_exec:
 	dlv exec --help | head -13
 	ENVIRONMENTAL_VARIABLE=set dlv exec debuggable_executable -- arbitrary_argument
+
+ex0: 
+	ENVIRONMENTAL_VARIABLE=set dlv debug main.go --init scripts/debug_script.txt -- somevalue
+debug_trace:
+	ENVIRONMENTAL_VARIABLE=set dlv trace main.go "GetMessa.*"  -- somevalue 
